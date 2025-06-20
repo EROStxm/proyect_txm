@@ -55,6 +55,9 @@
 <body>
     <div class="container">
         <div class="login-container">
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?>xd</div>
+            <?php endif; ?>
             <form id="registro" action="../../controladores/loginControl.php" method="get">
                 <h1 class="login-title">Inicio de Sesión</h1>
                 <div class="mb-3">
@@ -64,7 +67,7 @@
                 
                 <div class="mb-3">
                     <label for="passw" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="passw" name="passw" placeholder="Contraseña" required>
+                    <input type="password" class="form-control" id="passw" name="passw" placeholder="Contrasena" required>
                 </div>
                 
                 <button type="submit" class="btn btn-primary btn-login" name="enviar" value="Aceptar">Ingresar</button>
