@@ -3,7 +3,7 @@ session_start();
 require_once '../controladores/conexion.php';
 
 // Verificar si se envió el formulario
-if (isset($_GET['enviar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Conexión a la base de datos
     $conexion = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     
@@ -12,40 +12,33 @@ if (isset($_GET['enviar'])) {
         die("Error de conexión: " . $conexion->connect_error);
     }
     
-    // Escapar y limpiar datos de entrada
-    $usuario = $conexion->real_escape_string(trim($_GET['names']));
-    $password = trim($_GET['passw']);
+    // Obtener y limpiar datos
+    $usuario = trim($conexion->real_escape_string($_POST['usuario']));
+    $contrasena = $_POST['contrasena'];
     
-    // Consulta preparada para evitar SQL Injection
-    $sql = "SELECT idEmpleado, nombre, usuario, contrasena, rol FROM Empleado WHERE usuario = ?";
-    $stmt = $conexion->prepare($sql);
+    // Primero verificar si es empleado
+    $sql_empleado = "SELECT idEmpleado, nombre, apellidoPaterno, usuario, contrasena, rol 
+                    FROM empleado 
+                    WHERE usuario = ?";
+    $stmt_empleado = $conexion->prepare($sql_empleado);
+    $stmt_empleado->bind_param("s", $usuario);
+    $stmt_empleado->execute();
+    $result_empleado = $stmt_empleado->get_result();
     
-    if (!$stmt) {
-        die("Error en la preparación de la consulta: " . $conexion->error);
-    }
-    
-    $stmt->bind_param("s", $usuario);
-    
-    if (!$stmt->execute()) {
-        die("Error al ejecutar la consulta: " . $stmt->error);
-    }
-    
-    $resultado = $stmt->get_result();
-    
-    // Verificar si el usuario existe
-    if ($resultado->num_rows === 1) {
-        $empleado = $resultado->fetch_assoc();
+    if ($result_empleado->num_rows === 1) {
+        $empleado = $result_empleado->fetch_assoc();
         
-        // Verificar contraseña (hash)
-        if ($password === $empleado['contrasena']) {
-            // Iniciar sesión
-            $_SESSION['id_empleado'] = $empleado['idEmpleado'];
-            $_SESSION['nombre'] = $empleado['nombre'];
+        // Verificar contraseña (sin hash en este caso según tu DB)
+        if ($contrasena === $empleado['contrasena']) {
+            // Configurar sesión de empleado
+            $_SESSION['user_id'] = $empleado['idEmpleado'];
+            $_SESSION['nombre'] = $empleado['nombre'] . ' ' . $empleado['apellidoPaterno'];
             $_SESSION['rol'] = $empleado['rol'];
             $_SESSION['loggedin'] = true;
+            $_SESSION['tipo_usuario'] = 'empleado';
             
-            // Redirigir según el rol
-            switch ($_SESSION['rol']) {
+            // Redirigir según rol
+            switch ($empleado['rol']) {
                 case 'Admin':
                     header("Location: ../paginas/empleados/Admin.php");
                     break;
@@ -56,49 +49,50 @@ if (isset($_GET['enviar'])) {
                     header("Location: ../paginas/empleados/Inventario.php");
                     break;
                 default:
-                    header("Location: ../paginas/clientes/productos.php");
+                    header("Location: ../index.php");
             }
             exit;
-        } else {
-            // Contraseña incorrecta - CORRECCIÓN: Redirigir a login.php
-            $_SESSION['error'] = "Usuario o contraseña incorrectos";
-            header("Location: ../paginas/login_register/login.php");
-            exit;
         }
-    } else {
-        // Verificar si es un cliente
-        $sql_cliente = "SELECT idCliente, nombre, usuario, contrasena FROM Cliente WHERE usuario = ?";
-        $stmt_cliente = $conexion->prepare($sql_cliente);
-        $stmt_cliente->bind_param("s", $usuario);
-        $stmt_cliente->execute();
-        $resultado_cliente = $stmt_cliente->get_result();
-        
-        if ($resultado_cliente->num_rows === 1) {
-            $cliente = $resultado_cliente->fetch_assoc();
-            if (password_verify($password, $cliente['contrasena'])) {
-                $_SESSION['id_cliente'] = $cliente['idCliente'];
-                $_SESSION['nombre'] = $cliente['nombre'];
-                $_SESSION['loggedin'] = true;
-                $_SESSION['rol'] = 'Cliente';
-                header("Location: ../paginas/clientes/productos.php");
-                exit;
-            }
-        }
-        
-        // Usuario no existe - CORRECCIÓN: Redirigir a login.php
-        $_SESSION['error'] = "Usuario o contraseña incorrectos";
-        header("Location: ../paginas/login_register/login.php");
-        exit;
     }
     
-    $stmt->close();
-    if (isset($stmt_cliente)) {
-        $stmt_cliente->close();
+    // Si no es empleado, verificar si es cliente
+    $sql_cliente = "SELECT idCliente, nombre, apellidoPaterno, usuario, contrasena 
+                   FROM cliente 
+                   WHERE usuario = ?";
+    $stmt_cliente = $conexion->prepare($sql_cliente);
+    $stmt_cliente->bind_param("s", $usuario);
+    $stmt_cliente->execute();
+    $result_cliente = $stmt_cliente->get_result();
+    
+    if ($result_cliente->num_rows === 1) {
+        $cliente = $result_cliente->fetch_assoc();
+        
+        // Verificar contraseña (sin hash en este caso según tu DB)
+        if ($contrasena === $cliente['contrasena']) {
+            // Configurar sesión de cliente
+            $_SESSION['user_id'] = $cliente['idCliente'];
+            $_SESSION['nombre'] = $cliente['nombre'] . ' ' . $cliente['apellidoPaterno'];
+            $_SESSION['rol'] = 'Cliente';
+            $_SESSION['loggedin'] = true;
+            $_SESSION['tipo_usuario'] = 'cliente';
+            
+            header("Location: ../paginas/clientes/productos.php");
+            exit;
+        }
     }
+    
+    // Si llegamos aquí, las credenciales son incorrectas
+    $_SESSION['error'] = "Usuario o contraseña incorrectos";
+    header("Location: ../paginas/login_register/login.php");
+    exit;
+    
+    // Cerrar conexiones
+    $stmt_empleado->close();
+    $stmt_cliente->close();
     $conexion->close();
 } else {
-    // Acceso directo al script
-    header("Location: ../../index.php");
+    // Si se accede directamente al script sin enviar formulario
+    header("Location: ../index.php");
     exit;
 }
 ?>
