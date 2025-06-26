@@ -1,75 +1,128 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cliente - Cafetería</title>
+    <title>Registro - Cafetería TXM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --cafe-oscuro: #5a3d2a;
+            --cafe-medio: #6f4e37;
+            --cafe-claro: #8b6b4a;
+            --beige: #e6d5c3;
+            --texto-oscuro: #343a40;
+        }
+        
         body {
-            background-color: #f8f9fa;
+            background-color: var(--texto-oscuro);
             background-image: url('../../assets/images/cafe-background.jpg');
             background-size: cover;
             background-position: center;
+            background-blend-mode: overlay;
             min-height: 100vh;
+            color: white;
+            text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+            box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
         }
+        
         .register-container {
             max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--cafe-claro);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin: 2rem auto;
         }
+        
         .register-title {
             text-align: center;
-            margin-bottom: 30px;
-            color: #343a40;
+            margin-bottom: 2rem;
+            color: var(--beige);
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .btn-register {
-            width: 100%;
-            padding: 12px;
-            font-weight: 600;
-            background-color: #6f4e37;
-            border: none;
-            margin-top: 15px;
+        
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--cafe-claro);
+            color: white;
+            margin-bottom: 1rem;
         }
-        .btn-register:hover {
-            background-color: #5a3d2a;
+        
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: var(--cafe-medio);
+            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.25);
+            color: white;
+        }
+        .form-control::placeholder{
+            color: white;
         }
         .form-label {
+            color: var(--beige);
             font-weight: 500;
         }
+        
+        .btn-register {
+            width: 100%;
+            padding: 10px;
+            font-weight: 600;
+            background-color: var(--cafe-medio);
+            border: none;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn-register:hover {
+            background-color: var(--cafe-oscuro);
+            transform: translateY(-2px);
+        }
+        
+        .register-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--beige);
+        }
+        
+        .register-footer a {
+            color: var(--cafe-claro);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .register-footer a:hover {
+            color: var(--beige);
+            text-decoration: underline;
+        }
+        
         .password-strength {
             height: 5px;
-            margin-top: -10px;
+            margin-top: -5px;
             margin-bottom: 15px;
-            background-color: #e9ecef;
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             overflow: hidden;
         }
+        
         .password-strength-bar {
             height: 100%;
             width: 0%;
             transition: width 0.3s ease;
         }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #6c757d;
+        
+        .text-muted {
+            color: var(--beige) !important;
+            opacity: 0.7;
         }
-        .login-link a {
-            color: #6f4e37;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-        .form-control:focus {
-            border-color: #6f4e37;
-            box-shadow: 0 0 0 0.25rem rgba(111, 78, 55, 0.25);
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
         }
     </style>
 </head>
@@ -95,38 +148,38 @@
                 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
-                        <input type="text" class="form-control" id="apellidoMaterno" name="apellidoMaterno" maxlength="50">
+                        <label for="apellidoPaterno" class="form-label required-field">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="apellidoPaterno" name="apellidoPaterno" maxlength="50" placeholder="Registre su Apellido Paterno" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="apellidoPaterno" class="form-label">Apellido Paterno*</label>
-                        <input type="text" class="form-control" id="apellidoPaterno" name="apellidoPaterno" maxlength="50" required>
+                        <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
+                        <input type="text" class="form-control" id="apellidoMaterno" name="apellidoMaterno" maxlength="50" placeholder="Registre su Apellido Materno">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre*</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50" required>
+                        <label for="nombre" class="form-label required-field">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" maxlength="50" placeholder="Registre su Nombre" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="usuario" class="form-label">Nombre de Usuario*</label>
+                    <label for="usuario" class="form-label required-field">Nombre de Usuario</label>
                     <input type="text" class="form-control" id="usuario" name="usuario" maxlength="50" required>
                     <small class="text-muted">Este será tu nombre para iniciar sesión</small>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="email" class="form-label">Correo Electrónico*</label>
+                    <label for="email" class="form-label required-field">Correo Electrónico</label>
                     <input type="email" class="form-control" id="email" name="email" maxlength="100" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="telefono" class="form-label">Teléfono*</label>
+                    <label for="telefono" class="form-label required-field">Teléfono</label>
                     <input type="tel" class="form-control" id="telefono" name="telefono" maxlength="15" required>
                 </div>
                 
                 <div class="mb-3">
-                    <label for="password" class="form-label">Contraseña*</label>
+                    <label for="password" class="form-label required-field">Contraseña</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                     <div class="password-strength">
                         <div class="password-strength-bar" id="passwordStrengthBar"></div>
@@ -135,14 +188,15 @@
                 </div>
                 
                 <div class="mb-3">
-                    <label for="confirm_password" class="form-label">Confirmar Contraseña*</label>
+                    <label for="confirm_password" class="form-label required-field">Confirmar Contraseña</label>
                     <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                 </div>
                 
                 <button type="submit" class="btn btn-register">Registrarse</button>
                 
-                <div class="login-link">
+                <div class="register-footer">
                     <p>¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a></p>
+                    <p><a href="../../index.php">← Volver al inicio</a></p>
                 </div>
             </form>
         </div>

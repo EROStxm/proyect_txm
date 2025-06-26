@@ -1,10 +1,16 @@
 <?php
-// Configuración de la base de datos
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');      // Reemplaza con tu usuario de MySQL
-define('DB_PASS', 'root');   // Reemplaza con tu contraseña
-define('DB_NAME', 'proy_cafeteria_txm');   // Nombre de la base de datos
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
+define('DB_NAME', 'proy_cafeteria_txm');
 
-// Opcional: Configuración de zona horaria
-date_default_timezone_set('America/La_Paz');
+function obtenerConexion() {
+    $conexion = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
+    }
+    
+    return $conexion;
+}
 ?>

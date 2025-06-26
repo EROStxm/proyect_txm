@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Obtener y sanitizar datos
-    $nombre = $conexion->real_escape_string(trim($_POST['nombre']));
     $apellidoPaterno = $conexion->real_escape_string(trim($_POST['apellidoPaterno']));
     $apellidoMaterno = isset($_POST['apellidoMaterno']) ? $conexion->real_escape_string(trim($_POST['apellidoMaterno'])) : null;
+    $nombre = $conexion->real_escape_string(trim($_POST['nombre']));
     $usuario = $conexion->real_escape_string(trim($_POST['usuario']));
     $email = $conexion->real_escape_string(trim($_POST['email']));
     $telefono = $conexion->real_escape_string(trim($_POST['telefono']));

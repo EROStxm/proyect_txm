@@ -1,237 +1,421 @@
 <?php
-require_once '../../controladores/auth_check.php';
-if ($_SESSION['rol'] !== 'Admin') {
-    header("Location: ../../paginas/clientes/productos.php");
-    exit;
-}
+require_once '../../controladores/verificar_autenticacion.php';
 ?>
-<!doctype html>
-<html lang="en">
-  <head>
+<!DOCTYPE html>
+<html lang="es" class="h-100">
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.104.2">
-    <title>Product example · Bootstrap v5.2</title>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/product/">
-    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <title>Panel de Administración - TXM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
+        :root {
+            --cafe-oscuro: #5a3d2a;
+            --cafe-medio: #6f4e37;
+            --cafe-claro: #8b6b4a;
+            --beige: #e6d5c3;
+            --texto-oscuro: #343a40;
         }
-      }
-
-      .b-example-divider {
-        height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-    </style>    
-    <!-- Custom styles for this template -->
-    <link href="product.css" rel="stylesheet">
-  </head>
-  <body>    
-        <header class="site-header sticky-top py-1">
-        <nav class="container d-flex flex-column flex-md-row justify-content-between">
-            <a class="py-2" href="#" aria-label="Product">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mx-auto" role="img" viewBox="0 0 24 24"><title>Product</title><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>
-            </a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-            <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
-        </nav>
-        </header>
-
-        <main>
-        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-            <div class="col-md-5 p-lg-5 mx-auto my-5">
-            <h1 class="display-4 fw-normal">Punny headline</h1>
-            <p class="lead fw-normal">And an even wittier subheading to boot. Jumpstart your marketing efforts with this example based on Apple’s marketing pages.</p>
-            <a class="btn btn-outline-secondary" href="#">Coming soon</a>
+        
+        body {
+            background-color: var(--texto-oscuro);
+            background-image: url('../assets/images/cafe-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            color: white;
+            text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+            box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .sidebar {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid var(--cafe-claro);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--beige);
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover, 
+        .sidebar .nav-link.active {
+            background-color: var(--cafe-medio);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 2rem;
+            border: 1px solid var(--cafe-claro);
+        }
+        
+        .card-admin {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--cafe-claro);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        
+        .card-admin:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-admin .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-admin .card-title {
+            color: var(--beige);
+            font-weight: 600;
+        }
+        
+        .card-admin .card-text {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .btn-admin {
+            background-color: var(--cafe-medio);
+            border: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-admin:hover {
+            background-color: var(--cafe-oscuro);
+            color: white;
+        }
+        
+        .table-admin {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .table-admin th {
+            background-color: var(--cafe-medio);
+            color: white;
+            border-color: var(--cafe-claro);
+        }
+        
+        .table-admin td {
+            border-color: var(--cafe-claro);
+            vertical-align: middle;
+        }
+        
+        .header-admin {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--cafe-claro);
+            margin-bottom: 2rem;
+        }
+        
+        .user-dropdown .dropdown-menu {
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--cafe-claro);
+        }
+        
+        .user-dropdown .dropdown-item {
+            color: var(--beige);
+        }
+        
+        .user-dropdown .dropdown-item:hover {
+            background-color: var(--cafe-medio);
+            color: white;
+        }
+        
+        .stat-card {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border-left: 5px solid var(--cafe-medio);
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--beige);
+        }
+        
+        .stat-card .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    </style>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body class="d-flex flex-column h-100">    
+     <!-- Header -->
+    <header class="header-admin">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="bi bi-cup-hot-fill"></i> Cafetería TXM - Panel de Administración
+                </h3>
+                <div class="user-dropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-admin dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> <?php echo htmlspecialchars($nombre_usuario); ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li><span class="dropdown-item disabled"><i class="bi bi-person-badge"></i> <?php echo htmlspecialchars($rol_usuario); ?></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="../../controladores/cerrar_sesion.php"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="product-device shadow-sm d-none d-md-block"></div>
-            <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
         </div>
+    </header>
 
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="text-bg-primary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-light shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-        </div>
-
-        <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 p-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-            <div class="bg-light me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-            <div class="my-3 py-3">
-                <h2 class="display-5">Another headline</h2>
-                <p class="lead">And an even wittier subheading.</p>
-            </div>
-            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-            </div>
-        </div>
-        </main>
-
-        <footer class="container py-5">
+    <!-- Main Content -->
+    <main class="flex-shrink-0 admin-container">
         <div class="row">
-            <div class="col-12 col-md">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img" viewBox="0 0 24 24"><title>Product</title><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>
-            <small class="d-block mb-3 text-muted">&copy; 2017–2022</small>
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="sidebar">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-people"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-cup-straw"></i> Productos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-cash-coin"></i> Ventas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-box-seam"></i> Inventario
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-truck"></i> Proveedores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-graph-up"></i> Reportes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-gear"></i> Configuración
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-6 col-md">
-            <h5>Features</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="link-secondary" href="#">Cool stuff</a></li>
-                <li><a class="link-secondary" href="#">Random feature</a></li>
-                <li><a class="link-secondary" href="#">Team feature</a></li>
-                <li><a class="link-secondary" href="#">Stuff for developers</a></li>
-                <li><a class="link-secondary" href="#">Another one</a></li>
-                <li><a class="link-secondary" href="#">Last time</a></li>
-            </ul>
-            </div>
-            <div class="col-6 col-md">
-            <h5>Resources</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="link-secondary" href="#">Resource name</a></li>
-                <li><a class="link-secondary" href="#">Resource</a></li>
-                <li><a class="link-secondary" href="#">Another resource</a></li>
-                <li><a class="link-secondary" href="#">Final resource</a></li>
-            </ul>
-            </div>
-            <div class="col-6 col-md">
-            <h5>Resources</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="link-secondary" href="#">Business</a></li>
-                <li><a class="link-secondary" href="#">Education</a></li>
-                <li><a class="link-secondary" href="#">Government</a></li>
-                <li><a class="link-secondary" href="#">Gaming</a></li>
-            </ul>
-            </div>
-            <div class="col-6 col-md">
-            <h5>About</h5>
-            <ul class="list-unstyled text-small">
-                <li><a class="link-secondary" href="#">Team</a></li>
-                <li><a class="link-secondary" href="#">Locations</a></li>
-                <li><a class="link-secondary" href="#">Privacy</a></li>
-                <li><a class="link-secondary" href="#">Terms</a></li>
-            </ul>
+            
+            <!-- Main Content Area -->
+            <div class="col-lg-9">
+                <div class="main-content">
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">1,024</div>
+                                <div class="stat-label">Ventas Hoy</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">$24,560</div>
+                                <div class="stat-label">Ingresos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">56</div>
+                                <div class="stat-label">Productos Bajos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">128</div>
+                                <div class="stat-label">Clientes Nuevos</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <h4 class="mb-3 text-beige"><i class="bi bi-lightning"></i> Acciones Rápidas</h4>
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="card card-admin">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-plus-circle" style="font-size: 2rem; color: var(--beige);"></i>
+                                    <h5 class="card-title mt-2">Agregar Producto</h5>
+                                    <p class="card-text">Añade un nuevo producto al menú</p>
+                                    <a href="#" class="btn btn-admin">Ir</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card card-admin">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-person-plus" style="font-size: 2rem; color: var(--beige);"></i>
+                                    <h5 class="card-title mt-2">Registrar Nuevo Empleado</h5>
+                                    <p class="card-text">Registrar un Nuevo Empleado</p>
+                                    <a href="registrar_empleado.php" class="btn btn-admin">Ir</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card card-admin">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-cash-stack" style="font-size: 2rem; color: var(--beige);"></i>
+                                    <h5 class="card-title mt-2">Registrar Venta</h5>
+                                    <p class="card-text">Registra una nueva venta manual</p>
+                                    <a href="#" class="btn btn-admin">Ir</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card card-admin">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-box-seam" style="font-size: 2rem; color: var(--beige);"></i>
+                                    <h5 class="card-title mt-2">Actualizar Inventario</h5>
+                                    <p class="card-text">Realiza ajustes al inventario</p>
+                                    <a href="#" class="btn btn-admin">Ir</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Orders -->
+                    <h4 class="mb-3 text-beige"><i class="bi bi-clock-history"></i> Ventas Recientes</h4>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-admin">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#1001</td>
+                                    <td>Juan Pérez</td>
+                                    <td>2023-06-15 10:30</td>
+                                    <td>$45.50</td>
+                                    <td><span class="badge bg-success">Completado</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-admin"><i class="bi bi-eye"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#1000</td>
+                                    <td>María García</td>
+                                    <td>2023-06-15 09:15</td>
+                                    <td>$32.75</td>
+                                    <td><span class="badge bg-success">Completado</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-admin"><i class="bi bi-eye"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#999</td>
+                                    <td>Carlos López</td>
+                                    <td>2023-06-14 16:45</td>
+                                    <td>$28.90</td>
+                                    <td><span class="badge bg-success">Completado</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-admin"><i class="bi bi-eye"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Low Stock Products -->
+                    <h4 class="mb-3 text-beige"><i class="bi bi-exclamation-triangle"></i> Productos con Bajo Stock</h4>
+                    <div class="table-responsive">
+                        <table class="table table-admin">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Stock Actual</th>
+                                    <th>Stock Mínimo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Café Especial</td>
+                                    <td>Bebidas</td>
+                                    <td>3</td>
+                                    <td>10</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-admin"><i class="bi bi-plus-circle"></i> Reabastecer</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Croissant</td>
+                                    <td>Panadería</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-admin"><i class="bi bi-plus-circle"></i> Reabastecer</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-        </footer>
-    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Cerrar sesión después de 30 minutos de inactividad
-        setTimeout(function() {
-            window.location.href = '../paginas/login_register/login.php?timeout=1';
-        }, 30 * 60 * 1000); // 30 minutos en milisegundos
+    </main>
 
-        // Detectar actividad del usuario
-        document.addEventListener('mousemove', resetTimer);
-        document.addEventListener('keypress', resetTimer);
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-center">
+        <div class="container">
+            <span class="text-muted">© 2023 Cafetería TXM - Sistema de Administración</span>
+        </div>
+    </footer>
 
-        function resetTimer() {
-            clearTimeout(window.logoutTimer);
-            window.logoutTimer = setTimeout(function() {
-                window.location.href = '../paginas/login_register/login.php?timeout=1';
-            }, 30 * 60 * 1000);
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
